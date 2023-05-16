@@ -1,0 +1,51 @@
+[Endpoint - J6DE - Network Share Discovery (PowerShell Module) - Rule]
+action.correlationsearch.annotations = {"mitre_attack":["T1135"],"Migration":["ESM"],"Sigma":["6942bd25-5970-40ab-af49-944247103358"],"Jira":["JEA-901"],"Validated":["2022-03-28"]}
+action.correlationsearch.enabled = 1
+action.correlationsearch.label = J6DE - Network Share Discovery (PowerShell Module)
+action.customsearchbuilder.enabled = false
+action.makestreams.param.verbose = 0
+action.nbtstat.param.verbose = 0
+action.notable = 1
+action.notable.param.drilldown_name = Contributing Events Drilldown
+action.notable.param.drilldown_search = index=n_cy_wef source=XmlWinEventLog:Microsoft-Windows-PowerShell/Operational $orig_host$ | eval description=case(EventCode==4103, "Module Execution", EventCode==4104, "ScriptBlock Contents", EventCode==4105, "ScriptBlock Execution Start", EventCode==4106, "ScriptBlock Execution Complete") | rex field=ContextInfo "Runspace\sID\s\=\s(?<RunspaceId>.+\-.+\-.+\-.+)" | rex field=ContextInfo "Script\sName\s\=\s(?<ScriptName>.*)" | table _time EventCode description EventRecordID Payload RunspaceId ScriptName ScriptBlockId ScriptBlockText
+action.notable.param.rule_description = The Get-SmbShare PowerShell module has been invoked on host $orig_host$. This may have been done via a script or on a PowerShell prompt. Use the drilldown search to view PowerShell logs from this host for that timeframe.
+action.notable.param.rule_title = Get-SmbShare PowerShell module invoked on host $orig_host$
+action.notable.param.security_domain = endpoint
+action.notable.param.severity = low
+action.notable.param.verbose = 0
+action.nslookup.param.verbose = 0
+action.ping.param.verbose = 0
+action.risk = 1
+action.risk.forceCsvResults = 1
+action.risk.param._risk = [{"risk_object_field":"host","risk_object_type":"system","risk_score":10},{"risk_object_field":"user","risk_object_type":"user","risk_score":10}]
+action.risk.param._risk_message = Network shares enumerated on host $host$ by user $user$ via Get-SmbShare
+action.risk.param._risk_score = 0
+action.risk.param.verbose = 0
+action.send2uba.param.verbose = 0
+action.threat_add.param.verbose = 0
+alert.digest_mode = 0
+alert.suppress = 0
+alert.track = 1
+counttype = number of events
+cron_schedule = 37 * * * *
+description = Detects the usage of the "Get-SmbShare" module in either a powershell script or powershell prompt.
+dispatch.earliest_time = -65m@m
+dispatch.latest_time = -5m@m
+dispatch.rt_backfill = 1
+enableSched = 1
+quantity = 0
+relation = greater than
+request.ui_dispatch_app = SplunkEnterpriseSecuritySuite
+search = index=n_cy_wef source=XmlWinEventLog:Microsoft-Windows-PowerShell/Operational Payload ContextInfo get-smbshare\
+| search EventCode=4103\
+| rex field=ContextInfo "Command\sName\s\=\s(?<CommandName>\w+\-\w+)"\
+| rex field=ContextInfo "Runspace\sID\s\=\s(?<RunspaceId>.+\-.+\-.+\-.+)"\
+| rex field=ContextInfo "Script\sName\s\=\s(?<ScriptName>.*)"\
+| rex field=ContextInfo "User\s\=\s(?<user>.*)"\
+| search CommandName="Get-smbshare"\
+| eval src_nt_domain=mvindex(split(user, "\\"), 0)\
+| eval user=mvindex(split(user, "\\"), 1)\
+| eval start_time=strftime(_time, "%Y-%b-%d %T UTC%z")\
+| table start_time host CommandName Payload src_nt_domain user RunspaceId ScriptName\
+| rename RunspaceId AS transaction_id, ScriptName AS file_path, CommandName AS command, Payload AS script_content\
+| `j6de_network_share_discovery_powershell_module_filter`

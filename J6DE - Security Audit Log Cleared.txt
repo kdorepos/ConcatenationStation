@@ -1,0 +1,44 @@
+[Endpoint - J6DE - Security Audit Log Cleared - Rule]
+action.correlationsearch.annotations = {"mitre_attack":["T1070.001"],"Migration":["ESM"],"Jira":["JEA-789"],"Validated":["2022-02-18"]}
+action.correlationsearch.enabled = 1
+action.correlationsearch.label = J6DE - Security Audit Log Cleared
+action.customsearchbuilder.enabled = false
+action.makestreams.param.verbose = 0
+action.nbtstat.param.verbose = 0
+action.notable = 1
+action.notable.param.extract_artifacts = {"asset":["src","dest","dvc","host"],"identity":["user"]}
+action.notable.param.next_steps = {"version":1,"data":""}
+action.notable.param.rule_description = $user$ cleared the security event log at $start_time$
+action.notable.param.rule_title = Security Event Log Cleared On $orig_host$ by $user$
+action.notable.param.security_domain = endpoint
+action.notable.param.severity = high
+action.notable.param.verbose = 0
+action.nslookup.param.verbose = 0
+action.ping.param.verbose = 0
+action.risk = 1
+action.risk.forceCsvResults = 1
+action.risk.param._risk = [{"risk_object_field":"host","risk_object_type":"system","risk_score":30},{"risk_object_field":"user","risk_object_type":"user","risk_score":30}]
+action.risk.param._risk_message = Security event log cleared on host $host$ by user $user$
+action.risk.param._risk_score = 0
+action.risk.param.verbose = 0
+action.send2uba.param.verbose = 0
+action.threat_add.param.verbose = 0
+alert.digest_mode = 0
+alert.suppress = 1
+alert.suppress.fields = Computer,EventRecordID,user
+alert.suppress.period = 1s
+alert.track = 1
+counttype = number of events
+cron_schedule = 32 * * * *
+description = This alert indicates that a user has cleared the security event log on a Windows system. The user field is set to a combination of the "SubjectDomainName" and the "SubjectUserName". If the first part of the user is not NIPERNET or SOF, then a local user performed the action.
+dispatch.earliest_time = -70m@m
+dispatch.latest_time = -10m@m
+dispatch.rt_backfill = 1
+enableSched = 1
+quantity = 0
+relation = greater than
+request.ui_dispatch_app = SplunkEnterpriseSecuritySuite
+search = index=n_cy_wef source=XmlWinEventLog:Security sourcetype=xmlwineventlog logfilecleared \
+| search EventCode=1102\
+| stats earliest(SystemTime) as start_time values(EventCode) AS signature_id, values(EventRecordID) AS src_record, values(user) AS user by host\
+| `j6de_security_audit_log_cleared_whitelist`
