@@ -8,12 +8,6 @@
     wd: "/Users/kdor/Repos/ConcatenationStation"
 
   tasks:
-    - name: Register list of files
-      ansible.builtin.find:
-        paths: /Users/kdor/Repos/ConcatenationStation
-        patterns: '*.txt'
-      register: files
-
     - name: Merge files together
       ansible.builtin.assemble:
         src: "{{ wd }}"
