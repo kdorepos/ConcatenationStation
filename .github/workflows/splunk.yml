@@ -8,14 +8,19 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
-    container: 
-        image: splunk/splunk:latest
-        options: --user root
         
     steps:
         - name: Checkout
           uses: actions/checkout@v3
-        
+
+        - name: Download Splunk
+          run: wget -O splunk.tgz "https://download.splunk.com/products/splunk/releases/9.0.4.1/linux/splunk-9.0.4.1-419ad9369127-Linux-x86_64.tgz"
+          
+        - name: Install Splunk
+          run: |
+            mkdir /opt/splunk
+            tar -xvf splunk.tgz -C /opt/splunk
+
         - name: Start Splunk
           run: /opt/splunk/bin/splunk start --accept-license --answer-yes --gen-and-print-passwd 
 
