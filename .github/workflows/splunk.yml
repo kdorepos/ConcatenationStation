@@ -29,5 +29,4 @@ jobs:
           run: cat /opt/splunk/etc/system/local/macros.conf
         
         - name: Run btool check
-          run: /opt/splunk/bin/splunk btool check
-          shell: bash
+          run: "#!/bin/bash /opt/splunk/bin/splunk btool check"
