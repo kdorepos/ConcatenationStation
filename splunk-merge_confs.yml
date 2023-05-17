@@ -1,0 +1,25 @@
+---
+- name: Merge all .txt files into one .conf file
+  hosts: localhost
+  become: false
+  gather_facts: false
+
+  vars:
+    wd: "/Users/kdor/Repos/ConcatenationStation"
+
+  tasks:
+    - name: Register list of files
+      ansible.builtin.find:
+        paths: /Users/kdor/Repos/ConcatenationStation
+        patterns: '*.txt'
+      register: files
+
+    - name: Merge files together
+      ansible.builtin.assemble:
+        src: "{{ wd }}"
+        dest: "{{ wd }}/savedsearches.conf"
+        regexp: '\.txt$'
+        delimiter: " "
+        owner: kdor
+        group: staff
+        mode: '0644'
