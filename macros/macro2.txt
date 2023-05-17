@@ -1,0 +1,8 @@
+# macro foobar that takes one argument, invoked via `foobar(someval)`
+[foobar(1)]
+args = foo
+# note this is definition will include the leading and trailing quotes, i.e.
+# something `foobar(someval)`
+# would expand to
+# something "foo = someval"
+definition = "foo = $foo$"

@@ -8,10 +8,20 @@
     wd: "/Users/kdor/Repos/ConcatenationStation"
 
   tasks:
-    - name: Merge files together
+    - name: Merge savedsearches together
       ansible.builtin.assemble:
-        src: "{{ wd }}"
+        src: "{{ wd }}/savedsearches"
         dest: "{{ wd }}/savedsearches.conf"
+        regexp: '\.txt$'
+        delimiter: " "
+        owner: kdor
+        group: staff
+        mode: '0644'
+
+    - name: Merge macros together
+      ansible.builtin.assemble:
+        src: "{{ wd }}/macros"
+        dest: "{{ wd }}/macros.conf"
         regexp: '\.txt$'
         delimiter: " "
         owner: kdor

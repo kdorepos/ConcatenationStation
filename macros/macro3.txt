@@ -1,0 +1,7 @@
+# macro that takes two arguments
+# note that macro arguments can be named so this particular macro could be
+# invoked equivalently as `foobar(1,2)` `foobar(foo=1,bar=2)` or
+# `foobar(bar=2,foo=1)`
+[foobar(2)]
+args = foo, bar
+definition = "foo = $foo$, bar = $bar$"
