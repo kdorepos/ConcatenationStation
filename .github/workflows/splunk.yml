@@ -14,19 +14,19 @@ jobs:
           uses: actions/checkout@v3
 
         - name: Download Splunk
-          run: wget -q -O splunk.tgz "https://download.splunk.com/products/splunk/releases/9.0.4.1/linux/splunk-9.0.4.1-419ad9369127-Linux-x86_64.tgz"
+          run: wget -q -O splunk.tgz ""https://download.splunk.com/products/universalforwarder/releases/9.0.4/linux/splunkforwarder-9.0.4-de405f4a7979-Linux-x86_64.tgz""
           
         - name: Install Splunk
           run: tar -xf splunk.tgz -C /opt
 
         - name: Start Splunk
-          run: /opt/splunk/bin/splunk start --accept-license --answer-yes --gen-and-print-passwd 
+          run: /opt/splunkforwarder/bin/splunk start --accept-license --answer-yes --gen-and-print-passwd 
 
         - name: Move files
-          run: mv $GITHUB_WORKSPACE/*.conf /opt/splunk/etc/system/local/.
+          run: mv $GITHUB_WORKSPACE/*.conf /opt/splunkforwarder/etc/system/local/.
 
         - name: Show macros.conf
-          run: cat /opt/splunk/etc/system/local/macros.conf
+          run: cat /opt/splunkforwarder/etc/system/local/macros.conf
         
         - name: Run btool check
-          run: /opt/splunk/bin/splunk cmd btool check
+          run: /opt/splunkforwarder/bin/splunk cmd btool check
