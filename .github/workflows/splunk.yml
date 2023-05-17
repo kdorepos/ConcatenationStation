@@ -25,8 +25,8 @@ jobs:
         - name: Move files
           run: mv $GITHUB_WORKSPACE/*.conf /opt/splunk/etc/system/local/.
 
-        - name: List files in etc/system/local
-          run: ls /opt/splunk/etc/system/local  
+        - name: Show macros.conf
+          run: cat /opt/splunk/etc/system/local/macros.conf
         
         - name: Run btool check
-          run: sh /opt/splunk/bin/splunk btool check
+          run: /opt/splunk/bin/splunk btool check
